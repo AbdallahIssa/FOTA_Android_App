@@ -3,6 +3,7 @@ package com.example.fotaandroid;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,8 +23,6 @@ public class RegisterActivity extends AppCompatActivity {
     EditText userET, passET, emailET;
     Button registerBtn;
 
-    //FireBase
-    FirebaseAuth auth;
     DatabaseReference ref;
 
 
@@ -38,8 +37,6 @@ public class RegisterActivity extends AppCompatActivity {
         emailET = findViewById(R.id.EmailtxtEdit);
         registerBtn = findViewById(R.id.Registerbtn);
 
-        //FireBase Auth
-        auth = FirebaseAuth.getInstance();
 
         // Adding the Register Button event listener
         registerBtn.setOnClickListener(v -> {
@@ -57,12 +54,21 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
-    private void RegisterNow(final String username, String email, String password) {
+//    @Override
+//    public void onBackPressed() {
+//        moveTaskToBack(true);
+//    }
 
+    private void RegisterNow(final String username, String email, String password) {
+        //FireBase Auth
+        FirebaseAuth auth;
+        auth = FirebaseAuth.getInstance();
         if (isValidEmail(email)) {
-            auth.createUserWithEmailAndPassword(email, password).
-                    addOnCompleteListener(task -> {
+            Log.d("TAG", "Inside isValidEmail(email)");
+            auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
+                            Log.d("TAG", "Inside task is Successful");
                             FirebaseUser user = auth.getCurrentUser();
                             assert user != null;
                             String userid = user.getUid();
@@ -100,5 +106,4 @@ public class RegisterActivity extends AppCompatActivity {
     public static boolean isValidEmail(CharSequence target) {
         return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
     }
-
 }
